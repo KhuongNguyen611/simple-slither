@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 // using UnityEngine.InputSystem;
+using SpriteGlow;
 
 public class SnakeMove : MonoBehaviour
 {
@@ -136,6 +137,7 @@ public class SnakeMove : MonoBehaviour
     public float bodyPartFollowTimeRunning = 0.1f;
     void Running()
     {
+        makeOurSnakeGlow(running);
         if (bodyParts.Count > 2)
         {
             if (Input.GetMouseButtonDown(0))
@@ -186,6 +188,32 @@ public class SnakeMove : MonoBehaviour
         foodCounter--;
 
         StopCoroutine("LoseBodyPart");
+    }
+
+    void makeOurSnakeGlow(bool running)
+    {
+        if (running == true)
+        {
+            Transform snakeHead = transform.GetChild(0);
+            snakeHead.GetComponent<SpriteGlowEffect>().GlowBrightness = 3;
+            snakeHead.GetComponent<Renderer>().material.color = snakeColor;
+
+            foreach (Transform bodyPart in bodyParts)
+            {
+                bodyPart.GetComponent<SpriteGlowEffect>().GlowBrightness = 3;
+            }
+        }
+        else
+        {
+            Transform snakeHead = transform.GetChild(0);
+            snakeHead.GetComponent<SpriteGlowEffect>().GlowBrightness = 1;
+            snakeHead.GetComponent<Renderer>().material.color = snakeColor;
+
+            foreach (Transform bodyPart in bodyParts)
+            {
+                bodyPart.GetComponent<SpriteGlowEffect>().GlowBrightness = 1;
+            }
+        }
     }
 
     void ApplyingStuffForBody()
