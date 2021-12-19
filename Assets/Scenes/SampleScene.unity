@@ -797,16 +797,28 @@ PrefabInstance:
       value: 270
       objectReference: {fileID: 0}
     - target: {fileID: 2943984092208803571, guid: 0cbac03457ab6304c97751c81c9d36fe, type: 3}
+      propertyPath: scaleSenstivity
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2943984092208803571, guid: 0cbac03457ab6304c97751c81c9d36fe, type: 3}
       propertyPath: speedWhileRunnin
-      value: 10
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 2943984092208803571, guid: 0cbac03457ab6304c97751c81c9d36fe, type: 3}
       propertyPath: speedWhileWalking
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 2943984092208803571, guid: 0cbac03457ab6304c97751c81c9d36fe, type: 3}
+      propertyPath: followTimeSentivity
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2943984092208803571, guid: 0cbac03457ab6304c97751c81c9d36fe, type: 3}
       propertyPath: bodyPartOverTimeFollow
       value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2943984092208803571, guid: 0cbac03457ab6304c97751c81c9d36fe, type: 3}
+      propertyPath: scalingTrack.Array.size
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4906240822784544599, guid: 0cbac03457ab6304c97751c81c9d36fe, type: 3}
       propertyPath: m_Color.b

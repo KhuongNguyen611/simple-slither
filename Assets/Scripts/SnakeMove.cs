@@ -33,9 +33,9 @@ public class SnakeMove : MonoBehaviour
         sign.transform.rotation = Camera.main.transform.rotation;
         sign.GetComponent<TextMesh>().text = "Slither";
 
-        growOnThisFood.Add(2);
+        growOnThisFood.Add(1);
         var colors = new Color[]{
-        Color.black, Color.blue, Color.cyan, Color.clear, Color.gray, Color.green, Color.grey, Color.magenta, Color.red, Color.white, Color.yellow
+        Color.black, Color.blue, Color.cyan, Color.gray, Color.green, Color.grey, Color.magenta, Color.red, Color.white, Color.yellow
         };
 
         snakeColor = colors[Random.Range(0, colors.Length)];
@@ -67,6 +67,7 @@ public class SnakeMove : MonoBehaviour
         sign.transform.position = Vector2.SmoothDamp(sign.transform.position, transform.position + transform.up * distanceTagName, ref currentVelocity, smoothTime, speed);
         colorMySnake();
         ApplyingStuffForBody();
+        scaling();
     }
 
     public Transform snakeBody;
@@ -78,9 +79,10 @@ public class SnakeMove : MonoBehaviour
             List<GameObject> fruits = background.GetComponent<RandomSpawner>().currentFruits;
             fruits.Remove(other.gameObject);
             Destroy(other.gameObject);
-            foodCounter++;
+
             if (SizeUp(foodCounter) == false)
             {
+                foodCounter++;
                 if (bodyParts.Count == 0)
                 {
                     Vector3 currentPos = transform.position;
@@ -106,21 +108,13 @@ public class SnakeMove : MonoBehaviour
                     renderer.sortingOrder = -bodyParts.Count;
                 }
             }
-            else
-            {
-                currentSize += Vector3.one * growthrate;
-                bodyPartOverTimeFollow += 0.04f;
-                transform.localScale = currentSize;
-                foodCounter = 0;
-            }
-
         }
     }
 
     private int foodCounter;
     private int currentFood;
     public List<int> growOnThisFood = new List<int>();
-    private Vector3 currentSize = Vector3.one;
+    private Vector2 currentSize = Vector2.one;
     public float growthrate = 0.1f;
     public float bodyPartOverTimeFollow = 0.2f;
     bool SizeUp(int x)
@@ -128,8 +122,8 @@ public class SnakeMove : MonoBehaviour
         if (x == growOnThisFood[currentFood])
         {
             currentFood++;
-            growOnThisFood.Add(Mathf.FloorToInt(growOnThisFood[growOnThisFood.Count - 1] * 1.5f));
-            return true;
+            growOnThisFood.Add(Mathf.FloorToInt(growOnThisFood[currentFood - 1] * 2));
+            return false;
         }
         else { return false; }
     }
@@ -171,32 +165,13 @@ public class SnakeMove : MonoBehaviour
         {
             bodyPartOverTimeFollow = bodyPartFollowTimeWalking;
         }
-        Debug.Log(growOnThisFood[currentFood]);
-    }
 
-    int totalFoodCount(List<int> grow)
-    {
-        int sum = 0;
-        foreach (int item in grow)
-        {
-            sum += item;
-        }
-        sum = sum - grow[grow.Count - 1] + foodCounter;
-        return sum;
-    }
-    int totalFoodCurrentFood(List<int> grow)
-    {
-        int sum = 0;
-        foreach (int item in grow)
-        {
-            sum += item;
-        }
-        return sum;
     }
 
     IEnumerator LoseBodyPart()
     {
         yield return new WaitForSeconds(0.5f);
+
         int lastIndex = bodyParts.Count - 1;
         Transform lastBodyPart = bodyParts[lastIndex].transform;
 
@@ -205,31 +180,46 @@ public class SnakeMove : MonoBehaviour
         randomPos += (Vector2)lastBodyPart.position;
         randomSpawner.spawnObjectAt(randomPos);
 
-        int totalFoodEat = totalFoodCount(growOnThisFood);
-
-        currentSize -= Vector3.one * growthrate / totalFoodEat;
-        bodyPartOverTimeFollow -= 0.04f / totalFoodEat;
-        transform.localScale = currentSize;
 
         bodyParts.RemoveAt(lastIndex);
         Destroy(lastBodyPart.gameObject);
         foodCounter--;
 
-        if (foodCounter < 0)
-        {
-            growOnThisFood.RemoveAt(growOnThisFood.Count - 1);
-            currentFood--;
-            foodCounter = growOnThisFood[currentFood] - 1;
-        }
-
         StopCoroutine("LoseBodyPart");
     }
+
     void ApplyingStuffForBody()
     {
+        transform.localScale = currentSize;
         foreach (Transform bodyPart in bodyParts)
         {
             bodyPart.localScale = currentSize;
             bodyPart.GetComponent<SnakeBody>().overtime = bodyPartOverTimeFollow;
         }
+    }
+
+    public List<bool> scalingTrack;
+    private int howBigAreWe;
+    public float followTimeSentivity = 0.2f;
+    public float scaleSenstivity = 0.1f;
+    void scaling()
+    {
+        scalingTrack = new List<bool>(new bool[growOnThisFood.Count]);
+
+        howBigAreWe = 0;
+
+        for (int i = 0; i < growOnThisFood.Count; i++)
+        {
+            if (foodCounter >= growOnThisFood[i])
+            {
+                scalingTrack[i] = !scalingTrack[i];
+                howBigAreWe++;
+            }
+        }
+
+        float scale = howBigAreWe * scaleSenstivity;
+        currentSize = Vector2.one + new Vector2(scale, scale);
+        bodyPartFollowTimeWalking = (howBigAreWe / 100f) + followTimeSentivity;
+        bodyPartFollowTimeRunning = bodyPartFollowTimeWalking / 2;
     }
 }

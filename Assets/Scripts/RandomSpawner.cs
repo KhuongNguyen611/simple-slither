@@ -15,6 +15,8 @@ public class RandomSpawner : MonoBehaviour
     }
 
     // Update is called once per frame
+
+    Vector3 currentSize;
     void FixedUpdate()
     {
         // timer = Random.Range(1, 2);
@@ -31,7 +33,10 @@ public class RandomSpawner : MonoBehaviour
         for (int i = 0; i < currentFruits.Count; i++)
         {
             float newScale = Random.Range(0.5f, 1.5f);
-            currentFruits[i].transform.localScale = Vector2.Lerp(currentFruits[i].transform.localScale, new Vector2(newScale, newScale), newScale * 0.2f);
+            // currentFruits[i].transform.localScale = Vector2.Lerp(currentFruits[i].transform.localScale, new Vector2(newScale, newScale), newScale * 0.2f);
+            currentSize = Vector3.Slerp(currentSize, new Vector3(1.5f, 1.5f, 0.5f), Time.deltaTime * newScale);
+            currentFruits[i].transform.localScale = currentSize;
+
         }
     }
 
